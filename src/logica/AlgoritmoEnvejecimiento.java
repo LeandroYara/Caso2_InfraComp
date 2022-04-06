@@ -1,18 +1,20 @@
 package logica;
 
-public class Registro extends Thread{
+public class AlgoritmoEnvejecimiento extends Thread {
 
     public void run(){
 
         while (true){
 
             try {
-                sleep(2);
+                sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
     }
+
+
 
 }
