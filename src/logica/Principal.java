@@ -9,8 +9,8 @@ import java.util.Scanner;
 
 public class Principal {
 
-	private static int[] marcosPagina;
-	private static Hashtable<Integer, int[]> registroPaginas;
+	private static Hashtable<Integer, String> marcoPaginas;
+	private static Hashtable<Integer, Integer> registroPaginas;
 	private static boolean listaLlena = false;
 	
 	//Funcion de creacion del archivo
@@ -47,20 +47,32 @@ public class Principal {
 						System.out.println("Escriba el numero de marcos de pagina: ");
 						int numeroMarcos = scanConfiguracion.nextInt();
 
+						int numeroPaginas = 0;
+
 						try {
 							Scanner archivoConfiguracion = new Scanner(new File("Caso2_InfraComp\\docs\\" + nombreArchivo));
 							int numeroLinea = 1;
 
 							while (archivoConfiguracion.hasNextLine()){
 								String linea = archivoConfiguracion.nextLine();
+								char[] cadenaSeparada = linea.toCharArray();
 								if (numeroLinea <= 7){
 									System.out.println(linea);
 									if (numeroLinea == 6){
-										
+										int cuentaDigitos = 3;
+										String numeroString = "";
+										while (cuentaDigitos < linea.length()){
+											numeroString = numeroString + String.valueOf(cadenaSeparada[cuentaDigitos]);
+										}
+										numeroPaginas = Integer.parseInt(numeroString);
+										for (int i = 0; i < numeroPaginas; i++) {
+											registroPaginas.put(i,0);
+										}
 									}
 								}
 								else {
-
+									int numPagina = Integer.parseInt(String.valueOf(cadenaSeparada[8]));
+									agregarPagina(numPagina);
 								}
 							}
 
@@ -96,9 +108,9 @@ public class Principal {
             
 		}
 		
+	}
 
-		
-		
+	private static void agregarPagina(int numPagina) {
 	}
 
 }
