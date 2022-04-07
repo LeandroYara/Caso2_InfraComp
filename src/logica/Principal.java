@@ -3,21 +3,76 @@ package logica;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Principal {
 
-	private static Hashtable<Integer, String> marcoPaginas;
-	private static Hashtable<Integer, Integer> registroPaginas;
-	private static boolean listaLlena = false;
+	private int numeroMarcos;
+	private Hashtable<Integer, String> marcoPaginas;
+	private Hashtable<Integer, Integer> registroPaginas;
+	private ArrayList<Integer> registroTemporal;
+	private boolean listaMarcosLlena = false;
+
+	public int getNumeroMarcos() {
+		return this.numeroMarcos;
+	}
+
+	public void setNumeroMarcos(int numeroMarcos) {
+		this.numeroMarcos = numeroMarcos;
+	}
+
+	public Hashtable<Integer,String> getMarcoPaginas()
+	{
+		return this.marcoPaginas;
+	}
+
+	public void setMarcoPaginas(Hashtable<Integer,String> nuevoMarco)
+	{
+		this.marcoPaginas = nuevoMarco;
+	}
+
+	public Hashtable<Integer, Integer> getRegistroPaginas()
+	{
+		return this.registroPaginas;
+	}
+
+	public void setRegistroPaginas(Hashtable<Integer,Integer> nuevoRegistro)
+	{
+		this.registroPaginas = nuevoRegistro;
+	}
+
+	public ArrayList<Integer> getRegistroTemporal() {
+		return this.registroTemporal;
+	}
+
+	public void setRegistroTemporal(ArrayList<Integer> registroTemporal) {
+		this.registroTemporal = registroTemporal;
+	}
+
+	public boolean isListaMarcosLlena() {
+		return this.listaMarcosLlena;
+	}
+
+	public void setListaMarcosLlena(boolean listaLlena) {
+		this.listaMarcosLlena = listaLlena;
+	}
+
+	public Principal() {
+		this.numeroMarcos = 0;
+		this.marcoPaginas = new Hashtable<Integer, String>();
+		this.registroPaginas = new Hashtable<Integer, Integer>();
+		this.registroTemporal = new ArrayList<Integer>();
+		this.listaMarcosLlena = false;
+	}
 	
 	//Funcion de creacion del archivo
 	
 	public static void main(String[] args) throws IOException {
 
-		Principal buffer;
+		Principal buffer = new Principal();
 		Scanner sn = new Scanner(System.in);
 		boolean salir = false;
 		int opcion;
@@ -39,13 +94,12 @@ public class Principal {
 
                     case 2:
 					
-
 						Scanner scanConfiguracion = new Scanner(System.in);
 						System.out.println("Escriba el nombre del archivo de referencias: ");
 						String nombreArchivo = scanConfiguracion.nextLine();
 
 						System.out.println("Escriba el numero de marcos de pagina: ");
-						int numeroMarcos = scanConfiguracion.nextInt();
+						buffer.numeroMarcos = scanConfiguracion.nextInt();
 
 						int numeroPaginas = 0;
 
@@ -66,13 +120,13 @@ public class Principal {
 										}
 										numeroPaginas = Integer.parseInt(numeroString);
 										for (int i = 0; i < numeroPaginas; i++) {
-											registroPaginas.put(i,0);
+											buffer.registroPaginas.put(i,0);
 										}
 									}
 								}
 								else {
 									int numPagina = Integer.parseInt(String.valueOf(cadenaSeparada[8]));
-									agregarPagina(numPagina);
+									buffer.registroTemporal.add(numPagina);
 								}
 							}
 
@@ -84,8 +138,8 @@ public class Principal {
 
 						System.out.println();
 
-						AlgoritmoEnvejecimiento analizador = new AlgoritmoEnvejecimiento();
-						Registro manejador = new Registro();
+						AlgoritmoEnvejecimiento analizador = new AlgoritmoEnvejecimiento(buffer);
+						Registro manejador = new Registro(buffer);
 			
 						analizador.start();
 						manejador.start();
@@ -105,12 +159,25 @@ public class Principal {
 
 			}
             
-            
 		}
 		
 	}
 
-	private static void agregarPagina(int numPagina) {
+	public synchronized void agregarRegistro(int numPagina) {
+
+		this.registroPaginas.put(numPagina, 0);
+
+	}
+
+	public synchronized int agregarMarco(int numPagina) {
+
+		int resultado = 0;
+
+		if (this.listaMarcosLlena == false){
+			this.marcoPaginas.put(numPagina, "00000000");
+		}
+		return resultado;
+
 	}
 
 }
