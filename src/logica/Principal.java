@@ -103,6 +103,8 @@ public class Principal {
 
                         //Llamado a la funcion de creacion del archivo
 
+						break;
+
                     case 2:
 					
 						Scanner scanConfiguracion = new Scanner(System.in);
@@ -122,7 +124,6 @@ public class Principal {
 								String linea = archivoConfiguracion.nextLine();
 								char[] cadenaSeparada = linea.toCharArray();
 								if (numeroLinea <= 7){
-									System.out.println(linea);
 									if (numeroLinea == 6){
 										int cuentaDigitos = 3;
 										String numeroString = "";
@@ -136,15 +137,29 @@ public class Principal {
 									}
 								}
 								else {
-									int numPagina = Integer.parseInt(String.valueOf(cadenaSeparada[8]));
-									buffer.listaOrdenada.add(numPagina);
+									String numeroParcial = "";
+									int cuentaPagina = 8;
+									int numeroFinal = 0;
+									while (cadenaSeparada[cuentaPagina] != ','){
+										numeroParcial = numeroParcial + String.valueOf(cadenaSeparada[cuentaPagina]);
+										cuentaPagina += 1;
+									}
+									numeroFinal = Integer.parseInt(numeroParcial);
+									buffer.listaOrdenada.add(numeroFinal);
 								}
+								numeroLinea += 1;
 							}
 						} catch (FileNotFoundException e){
 
 							System.out.println("No se encontró el archivo");
+						} finally {
+							try {
+								if (sn != null)
+									sn.close();
+							} catch (Exception ex2) {
+								System.out.println("Mensaje 2: " + ex2.getMessage());
+							}
 						}
-						System.out.println();
 
 						AlgoritmoEnvejecimiento analizador = new AlgoritmoEnvejecimiento(buffer);
 						Registro manejador = new Registro(buffer);
@@ -152,14 +167,19 @@ public class Principal {
 						analizador.start();
 						manejador.start();
 
+						System.out.println("\n" + buffer.registroPaginas);
+						System.out.println("\n" + buffer.numeroFallas);
+
+						break;
+
                     case 3:
 
                         salir = true;
 						sn.close();
-
-                    default:
-                        System.out.println("Solo números entre 1 y 3");
+						
+						break;
 				}
+
 			} catch (InputMismatchException e) {
 
 				System.out.println("Debes insertar un número");
