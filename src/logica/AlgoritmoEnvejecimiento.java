@@ -11,8 +11,12 @@ public class AlgoritmoEnvejecimiento extends Thread {
 
     public void run(){
 
-        while (true){
-
+        while (buffer.getListaOrdenada().size() > 0){
+            if (buffer.getListaLlena() == true) {
+                buffer.quitarMarco();
+                buffer.setListaLlena(false);
+            }
+            
             try {
                 sleep(1);
             } catch (InterruptedException e) {

@@ -10,9 +10,10 @@ public class Registro extends Thread{
 
     public void run(){
 
-        while (true){
-
-
+        while (buffer.getListaOrdenada().size() > 0){
+            int paginaActual = buffer.getListaOrdenada().get(0);
+            buffer.agregarMarco(paginaActual);
+            
             try {
                 sleep(2);
             } catch (InterruptedException e) {

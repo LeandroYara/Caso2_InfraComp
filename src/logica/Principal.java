@@ -7,14 +7,17 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Principal {
 
 	private int numeroMarcos;
 	private Hashtable<Integer, String> marcoPaginas;
 	private Hashtable<Integer, Integer> registroPaginas;
-	private ArrayList<Integer> registroTemporal;
-	private boolean listaMarcosLlena = false;
+	private ArrayList<Integer> listaOrdenada;
+	private int numeroFallas;
+
+	private boolean listaLlena = false;
 
 	public int getNumeroMarcos() {
 		return this.numeroMarcos;
@@ -44,28 +47,36 @@ public class Principal {
 		this.registroPaginas = nuevoRegistro;
 	}
 
-	public ArrayList<Integer> getRegistroTemporal() {
-		return this.registroTemporal;
+	public ArrayList<Integer> getListaOrdenada() {
+		return this.listaOrdenada;
 	}
 
-	public void setRegistroTemporal(ArrayList<Integer> registroTemporal) {
-		this.registroTemporal = registroTemporal;
+	public void setListaOrdenada(ArrayList<Integer> listaOrdenada) {
+		this.listaOrdenada = listaOrdenada;
 	}
 
-	public boolean isListaMarcosLlena() {
-		return this.listaMarcosLlena;
+	public int getNumeroFallas() {
+		return this.numeroFallas;
 	}
 
-	public void setListaMarcosLlena(boolean listaLlena) {
-		this.listaMarcosLlena = listaLlena;
+	public void setNumeroFallas(int numeroFallas) {
+		this.numeroFallas = numeroFallas;
+	}
+
+	public boolean getListaLlena() {
+		return this.listaLlena;
+	}
+
+	public void setListaLlena(boolean listaLlena) {
+		this.listaLlena = listaLlena;
 	}
 
 	public Principal() {
 		this.numeroMarcos = 0;
 		this.marcoPaginas = new Hashtable<Integer, String>();
 		this.registroPaginas = new Hashtable<Integer, Integer>();
-		this.registroTemporal = new ArrayList<Integer>();
-		this.listaMarcosLlena = false;
+		this.listaOrdenada = new ArrayList<Integer>();
+		this.listaLlena = false;
 	}
 	
 	//Funcion de creacion del archivo
@@ -104,7 +115,7 @@ public class Principal {
 						int numeroPaginas = 0;
 
 						try {
-							Scanner archivoConfiguracion = new Scanner(new File("Caso2_InfraComp\\docs\\" + nombreArchivo));
+							Scanner archivoConfiguracion = new Scanner(new File("docs\\" + nombreArchivo));
 							int numeroLinea = 1;
 
 							while (archivoConfiguracion.hasNextLine()){
@@ -126,16 +137,13 @@ public class Principal {
 								}
 								else {
 									int numPagina = Integer.parseInt(String.valueOf(cadenaSeparada[8]));
-									buffer.registroTemporal.add(numPagina);
+									buffer.listaOrdenada.add(numPagina);
 								}
 							}
-
 						} catch (FileNotFoundException e){
 
 							System.out.println("No se encontró el archivo");
-
 						}
-
 						System.out.println();
 
 						AlgoritmoEnvejecimiento analizador = new AlgoritmoEnvejecimiento(buffer);
@@ -147,20 +155,17 @@ public class Principal {
                     case 3:
 
                         salir = true;
+						sn.close();
 
                     default:
                         System.out.println("Solo números entre 1 y 3");
 				}
-
 			} catch (InputMismatchException e) {
 
 				System.out.println("Debes insertar un número");
                 sn.next();
-
 			}
-            
 		}
-		
 	}
 
 	public synchronized void agregarRegistro(int numPagina) {
@@ -169,15 +174,52 @@ public class Principal {
 
 	}
 
-	public synchronized int agregarMarco(int numPagina) {
+	public synchronized void agregarMarco(int numPagina) {
 
-		int resultado = 0;
-
-		if (this.listaMarcosLlena == false){
-			this.marcoPaginas.put(numPagina, "00000000");
+		this.marcoPaginas.put(numPagina, "00000000");
+		this.listaOrdenada.remove(0);
+		this.numeroFallas += 1;
+		Set<Integer> listaLlaves = this.marcoPaginas.keySet();
+		
+		for (Integer llave : listaLlaves) {
+			if (llave == numPagina){
+				this.marcoPaginas.put(llave, "1" + this.marcoPaginas.get(llave));
+			}
+			else {
+				this.marcoPaginas.put(llave, "0" + this.marcoPaginas.get(llave));
+			}
 		}
-		return resultado;
-
 	}
 
+	public synchronized void quitarMarco() {
+
+		int paginaVieja = 0;
+		int numeroViejo = 0;
+		char [] separacionCadena;
+		Set<Integer> listaLlaves = this.marcoPaginas.keySet();
+		
+		for (Integer llave : listaLlaves) {
+			separacionCadena = this.marcoPaginas.get(llave).toCharArray();
+			int contador = 0;
+			int cuentaCeros = 0;
+			boolean unoHallado = false;
+			while ((contador < separacionCadena.length) && (unoHallado == false)){
+				if (separacionCadena[contador] == '0'){
+					cuentaCeros += 1;
+				}
+				else {
+					if (separacionCadena[contador] == '1'){
+						unoHallado = true;
+					}
+				}
+			}
+			if (cuentaCeros >= numeroViejo){
+				paginaVieja = llave;
+				numeroViejo = cuentaCeros;
+			}
+		}
+		this.marcoPaginas.remove(paginaVieja);
+		this.registroPaginas.put(paginaVieja, 0);
+
+	}
 }
