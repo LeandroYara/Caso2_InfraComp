@@ -16,7 +16,6 @@ public class Principal {
 	private Hashtable<Integer, Integer> registroPaginas;
 	private ArrayList<Integer> listaOrdenada;
 	private int numeroFallas;
-
 	private boolean listaLlena = false;
 
 	public int getNumeroMarcos() {
@@ -76,6 +75,7 @@ public class Principal {
 		this.marcoPaginas = new Hashtable<Integer, String>();
 		this.registroPaginas = new Hashtable<Integer, Integer>();
 		this.listaOrdenada = new ArrayList<Integer>();
+		this.numeroFallas = 0;
 		this.listaLlena = false;
 	}
 	
@@ -112,7 +112,7 @@ public class Principal {
 						String nombreArchivo = scanConfiguracion.nextLine();
 
 						System.out.println("Escriba el numero de marcos de pagina: ");
-						buffer.numeroMarcos = scanConfiguracion.nextInt();
+						buffer.numeroMarcos = Integer.parseInt(scanConfiguracion.nextLine());
 
 						int numeroPaginas = 0;
 
@@ -129,6 +129,7 @@ public class Principal {
 										String numeroString = "";
 										while (cuentaDigitos < linea.length()){
 											numeroString = numeroString + String.valueOf(cadenaSeparada[cuentaDigitos]);
+											cuentaDigitos += 1;
 										}
 										numeroPaginas = Integer.parseInt(numeroString);
 										for (int i = 0; i < numeroPaginas; i++) {
@@ -149,16 +150,10 @@ public class Principal {
 								}
 								numeroLinea += 1;
 							}
+							archivoConfiguracion.close();
 						} catch (FileNotFoundException e){
 
 							System.out.println("No se encontró el archivo");
-						} finally {
-							try {
-								if (sn != null)
-									sn.close();
-							} catch (Exception ex2) {
-								System.out.println("Mensaje 2: " + ex2.getMessage());
-							}
 						}
 
 						AlgoritmoEnvejecimiento analizador = new AlgoritmoEnvejecimiento(buffer);
@@ -166,9 +161,6 @@ public class Principal {
 			
 						analizador.start();
 						manejador.start();
-
-						System.out.println("\n" + buffer.registroPaginas);
-						System.out.println("\n" + buffer.numeroFallas);
 
 						break;
 
@@ -190,9 +182,13 @@ public class Principal {
 
 	public synchronized void agregarMarco(int numPagina) {
 
-		this.marcoPaginas.put(numPagina, "00000000");
+		if (this.registroPaginas.get(numPagina) == 0) {
+			this.marcoPaginas.put(numPagina, "");
+			this.numeroFallas += 1;
+			this.registroPaginas.put(numPagina, 1);
+		}
+
 		this.listaOrdenada.remove(0);
-		this.numeroFallas += 1;
 		Set<Integer> listaLlaves = this.marcoPaginas.keySet();
 		
 		for (Integer llave : listaLlaves) {
@@ -202,6 +198,10 @@ public class Principal {
 			else {
 				this.marcoPaginas.put(llave, "0" + this.marcoPaginas.get(llave));
 			}
+		}
+
+		if (this.marcoPaginas.size() == this.numeroMarcos){
+			this.listaLlena = true;
 		}
 	}
 
@@ -218,14 +218,13 @@ public class Principal {
 			int cuentaCeros = 0;
 			boolean unoHallado = false;
 			while ((contador < separacionCadena.length) && (unoHallado == false)){
-				if (separacionCadena[contador] == '0'){
-					cuentaCeros += 1;
+				if (separacionCadena[contador] == '1'){
+					unoHallado = true;
 				}
 				else {
-					if (separacionCadena[contador] == '1'){
-						unoHallado = true;
-					}
+					cuentaCeros += 1;
 				}
+				contador += 1;
 			}
 			if (cuentaCeros >= numeroViejo){
 				paginaVieja = llave;
