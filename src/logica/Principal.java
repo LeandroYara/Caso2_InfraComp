@@ -168,12 +168,6 @@ public class Principal {
 		}
 	}
 
-	public synchronized void agregarRegistro(int numPagina) {
-
-		this.registroPaginas.put(numPagina, 0);
-
-	}
-
 	public synchronized void agregarMarco(int numPagina) {
 
 		this.marcoPaginas.put(numPagina, "00000000");
@@ -220,6 +214,5 @@ public class Principal {
 		}
 		this.marcoPaginas.remove(paginaVieja);
 		this.registroPaginas.put(paginaVieja, 0);
-
 	}
 }

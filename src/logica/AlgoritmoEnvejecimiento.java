@@ -7,6 +7,7 @@ public class AlgoritmoEnvejecimiento extends Thread {
     public AlgoritmoEnvejecimiento(Principal b){
 
         this.buffer = b;
+        
     }
 
     public void run(){
@@ -16,7 +17,7 @@ public class AlgoritmoEnvejecimiento extends Thread {
                 buffer.quitarMarco();
                 buffer.setListaLlena(false);
             }
-            
+
             try {
                 sleep(1);
             } catch (InterruptedException e) {
