@@ -26,10 +26,8 @@ public class AlgoritmoEnvejecimiento extends Thread {
         }
 
         System.out.println("Lista final de marcos de pagina: " + buffer.getMarcoPaginas());
-        System.out.println("Numero total de fallas: " + buffer.getNumeroFallas());
+        System.out.println("Numero total de fallos de pagina: " + buffer.getNumeroFallas());
 
     }
-
-
 
 }

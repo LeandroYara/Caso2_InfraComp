@@ -22,7 +22,5 @@ public class Registro extends Thread{
                 e.printStackTrace();
             }
         }
-
     }
-
 }

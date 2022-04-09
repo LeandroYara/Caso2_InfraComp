@@ -119,9 +119,11 @@ public class Principal {
 						try {
 							Scanner archivoConfiguracion = new Scanner(new File("docs\\" + nombreArchivo));
 							int numeroLinea = 1;
+                            System.out.println("Configuracion del archivo: ");
 
 							while (archivoConfiguracion.hasNextLine()){
 								String linea = archivoConfiguracion.nextLine();
+                                System.out.println(linea);
 								char[] cadenaSeparada = linea.toCharArray();
 								if (numeroLinea <= 7){
 									if (numeroLinea == 6){
