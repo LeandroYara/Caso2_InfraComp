@@ -358,13 +358,15 @@ public class Principal {
                     case 2:
 					
 						Scanner scanConfiguracion = new Scanner(System.in);
-						System.out.println("Escriba el nombre del archivo de referencias: ");
+						System.out.println("Escriba el nombre del archivo de referencias (con .txt): ");
 						String nombreArchivo = scanConfiguracion.nextLine();
 
 						System.out.println("Escriba el numero de marcos de pagina: ");
 						buffer.numeroMarcos = Integer.parseInt(scanConfiguracion.nextLine());
 
 						int numeroPaginas = 0;
+						buffer.numeroFallas = 0;
+						buffer.marcoPaginas = new Hashtable<Integer, String>();
 
 						try {
 							Scanner archivoConfiguracion = new Scanner(new File("docs\\" + nombreArchivo));
