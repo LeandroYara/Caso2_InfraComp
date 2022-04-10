@@ -130,9 +130,12 @@ public class Principal {
                         System.out.println("Escriba el tipo de recorrido (1 o 2): ");
 						tipoRecorrido = Integer.parseInt(scanParametros.nextLine());
 
-                        numberPaginas = tamañoPagina/tamañoEntero * 3;
-
                         numeroReferencias = filasMatrices * columnasMatrices * 3;
+
+						numberPaginas = numeroReferencias/(tamañoPagina/tamañoEntero);
+						if (numeroReferencias % (tamañoPagina/tamañoEntero) != 0){
+							numberPaginas += 1;
+						}
 
                         File archivo = new File("docs\\" + nombreFile + ".txt");
                         try {
@@ -143,7 +146,7 @@ public class Principal {
                                 BufferedWriter info = new BufferedWriter(fileStream);
 
                                 info.write("TP=" + Integer.toString(tamañoPagina));
-                                System.out.println("TP=" + Integer.toString(tamañoPagina) + "\\n");
+                                System.out.println("TP=" + Integer.toString(tamañoPagina) + "\n");
                                 info.newLine();
                                 info.write("TE=" + Integer.toString(tamañoEntero));
                                 System.out.println("TE=" + Integer.toString(tamañoEntero) + "\n");
@@ -164,37 +167,184 @@ public class Principal {
                                 System.out.println("NR=" + Integer.toString(numeroReferencias) + "\n");
 
                                 int valorA = 0;
-                                int valorB = tamañoPagina/tamañoEntero;
-                                int valorC = (tamañoPagina/tamañoEntero) * 2;
+                                Double dvalorB = numberPaginas * (1.0/3.0);
+								int valorB = dvalorB.intValue();
+                                Double dvalorC = numberPaginas * (2.0/3.0);
+								int valorC = dvalorC.intValue();
+								int separacion = (filasMatrices * columnasMatrices) / (tamañoPagina / tamañoEntero);
+								if (separacion == 0){
+									valorB = 0;
+									valorC = 0;
+								}
+								int cuentaAdicion = 0;
+								int cuentaPagina = 0;
+								int cuentaCorrimiento = 0;
 
                                 if (tipoRecorrido == 1){
                                     for (int i = 0; i < filasMatrices; i++){
                                         for (int j = 0; j < columnasMatrices; j++){
                                             info.newLine();
-                                            info.write("A:[" + Integer.toString(i) + "-" + Integer.toString(j) + "]," + Integer.toString(valorA + i) + "," + Integer.toString(tamañoEntero * j));
+											if (separacion == 0){
+												if (cuentaAdicion == tamañoPagina){
+													cuentaAdicion = 0;
+													cuentaPagina += 1;
+													cuentaCorrimiento = 0;
+												}
+											}
+                                            info.write("A:[" + Integer.toString(i) + "-" + Integer.toString(j) + "]," + Integer.toString(valorA + cuentaPagina) + "," + Integer.toString(tamañoEntero * cuentaCorrimiento));
+											if (separacion == 0){
+												cuentaCorrimiento += 1;
+											}
+											cuentaAdicion += 1;
                                             info.newLine();
-                                            info.write("B:[" + Integer.toString(i) + "-" + Integer.toString(j) + "]," + Integer.toString(valorB + i) + "," + Integer.toString(tamañoEntero * j));
+											if (separacion == 0){
+												if (cuentaAdicion == tamañoPagina){
+													cuentaAdicion = 0;
+													cuentaPagina += 1;
+													cuentaCorrimiento = 0;
+												}
+											}
+                                            info.write("B:[" + Integer.toString(i) + "-" + Integer.toString(j) + "]," + Integer.toString(valorB + cuentaPagina) + "," + Integer.toString(tamañoEntero * cuentaCorrimiento));
+											if (separacion == 0){
+												cuentaCorrimiento += 1;
+											}
+											cuentaAdicion += 1;
                                             info.newLine();
-                                            info.write("C:[" + Integer.toString(i) + "-" + Integer.toString(j) + "]," + Integer.toString(valorC + i) + "," + Integer.toString(tamañoEntero * j));
+											if (separacion == 0){
+												if (cuentaAdicion == tamañoPagina){
+													cuentaAdicion = 0;
+													cuentaPagina += 1;
+													cuentaCorrimiento = 0;
+												}
+											}
+                                            info.write("C:[" + Integer.toString(i) + "-" + Integer.toString(j) + "]," + Integer.toString(valorC + cuentaPagina) + "," + Integer.toString(tamañoEntero * cuentaCorrimiento));
+											if (separacion == 0){
+												cuentaCorrimiento += 1;
+											}
+											cuentaAdicion += 1;
+											if (separacion != 0){
+												cuentaCorrimiento += 1;
+												if (cuentaAdicion == numeroReferencias/separacion){
+													cuentaAdicion = 0;
+													cuentaPagina += 1;
+													cuentaCorrimiento = 0;
+												}
+											}
                                         }
                                     }
                                 }
                                 else {
                                     if (tipoRecorrido == 2) {
+										boolean seguir2Paginas = true;
                                         for (int j = 0; j < columnasMatrices; j++){
                                             for (int i = 0; i < filasMatrices; i++){
+												if (separacion != 0){
+													if (cuentaPagina == separacion){
+														cuentaPagina = 0;
+													}
+												}
                                                 info.newLine();
-                                                info.write("A:[" + Integer.toString(i) + "-" + Integer.toString(j) + "]," + Integer.toString(valorA + i) + "," + Integer.toString(tamañoEntero * j));
+												if (separacion == 0){
+													if (seguir2Paginas == true && cuentaAdicion == tamañoPagina) {
+														seguir2Paginas = false;
+														cuentaAdicion = 0;
+														cuentaPagina = 0;
+													}
+												}
+                                                info.write("A:[" + Integer.toString(i) + "-" + Integer.toString(j) + "]," + Integer.toString(valorA + cuentaPagina) + "," + Integer.toString(tamañoEntero * cuentaCorrimiento));
+												if (separacion == 0) {
+													if (cuentaPagina == 0 && seguir2Paginas == true){
+														cuentaPagina = 1;
+														if (cuentaAdicion % 2 != 0){
+															cuentaCorrimiento += 1;
+														}
+													}
+													else {
+														if (cuentaPagina == 1 && seguir2Paginas == true){
+															cuentaPagina = 0;
+															if (cuentaAdicion % 2 != 0){
+																cuentaCorrimiento += 1;
+															}
+														}
+													}
+													if (seguir2Paginas == false) {
+														cuentaCorrimiento += 1;
+													}
+												}
+												cuentaAdicion += 1;
                                                 info.newLine();
-                                                info.write("B:[" + Integer.toString(i) + "-" + Integer.toString(j) + "]," + Integer.toString(valorB + i) + "," + Integer.toString(tamañoEntero * j));
+												if (separacion == 0){
+													if (seguir2Paginas == true && cuentaAdicion == tamañoPagina) {
+														seguir2Paginas = false;
+														cuentaAdicion = 0;
+														cuentaPagina = 0;
+													}
+												}
+                                                info.write("B:[" + Integer.toString(i) + "-" + Integer.toString(j) + "]," + Integer.toString(valorB + cuentaPagina) + "," + Integer.toString(tamañoEntero * cuentaCorrimiento));
+												if (separacion == 0) {
+													if (cuentaPagina == 0 && seguir2Paginas == true){
+														cuentaPagina = 1;
+														if (cuentaAdicion % 2 != 0){
+															cuentaCorrimiento += 1;
+														}
+													}
+													else {
+														if (cuentaPagina == 1 && seguir2Paginas == true){
+															cuentaPagina = 0;
+															if (cuentaAdicion % 2 != 0){
+																cuentaCorrimiento += 1;
+															}
+														}
+													}
+													if (seguir2Paginas == false) {
+														cuentaCorrimiento += 1;
+													}
+												}
+												cuentaAdicion += 1;
                                                 info.newLine();
-                                                info.write("C:[" + Integer.toString(i) + "-" + Integer.toString(j) + "]," + Integer.toString(valorC + i) + "," + Integer.toString(tamañoEntero * j));
-                                            }
-                                        }
-                                    }
-                                }
-                                info.close();
-                            }
+												if (separacion == 0){
+													if (seguir2Paginas == true && cuentaAdicion == tamañoPagina) {
+														seguir2Paginas = false;
+														cuentaAdicion = 0;
+														cuentaPagina = 0;
+													}
+												}
+                                                info.write("C:[" + Integer.toString(i) + "-" + Integer.toString(j) + "]," + Integer.toString(valorC + cuentaPagina) + "," + Integer.toString(tamañoEntero * cuentaCorrimiento));
+												if (separacion == 0) {
+													if (cuentaPagina == 0 && seguir2Paginas == true){
+														cuentaPagina = 1;
+														if (cuentaAdicion % 2 != 0){
+															cuentaCorrimiento += 1;
+														}
+													}
+													else {
+														if (cuentaPagina == 1 && seguir2Paginas == true){
+															cuentaPagina = 0;
+															if (cuentaAdicion % 2 != 0){
+																cuentaCorrimiento += 1;
+															}
+														}
+													}
+													if (seguir2Paginas == false) {
+														cuentaCorrimiento += 1;
+													}
+												}
+												cuentaAdicion += 1;
+												if (separacion != 0){
+													cuentaPagina += 1;
+													if (cuentaAdicion == numeroReferencias/separacion){
+														cuentaAdicion = 0;
+                                            		}
+													if (cuentaPagina % separacion == 0){
+														cuentaCorrimiento += 1;
+													}
+												}
+                                        	}
+                                    	}
+                                	}
+                            	}
+								info.close();
+							}
                             else {
                                 System.out.println("El archivo ya existe");
                             }
