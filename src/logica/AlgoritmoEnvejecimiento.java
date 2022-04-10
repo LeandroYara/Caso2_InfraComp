@@ -13,7 +13,7 @@ public class AlgoritmoEnvejecimiento extends Thread {
     public void run(){
 
         while (buffer.getListaOrdenada().size() > 0){
-            if (buffer.getListaLlena() == true) {
+            if (buffer.getMarcoPaginas().size() == buffer.getNumeroMarcos() + 1) {
                 buffer.quitarMarco();
                 buffer.setListaLlena(false);
             }

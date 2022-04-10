@@ -367,6 +367,8 @@ public class Principal {
 						int numeroPaginas = 0;
 						buffer.numeroFallas = 0;
 						buffer.marcoPaginas = new Hashtable<Integer, String>();
+						buffer.listaLlena = false;
+						buffer.registroPaginas = new Hashtable<Integer, Integer>();
 
 						try {
 							Scanner archivoConfiguracion = new Scanner(new File("docs\\" + nombreArchivo));
@@ -454,7 +456,7 @@ public class Principal {
 			}
 		}
 
-		if (this.marcoPaginas.size() == this.numeroMarcos){
+		if (this.marcoPaginas.size() == (this.numeroMarcos) + 1){
 			this.listaLlena = true;
 		}
 	}
